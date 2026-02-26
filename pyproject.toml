@@ -1,0 +1,24 @@
+[project]
+name = "agent-reliability-lab"
+version = "0.1.0"
+description = "Agent Reliability Lab API and tooling"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.110.0,<0.112.0",
+    "uvicorn[standard]>=0.30.0,<0.31.0",
+    "pytest>=8.2.0,<9.0.0",
+    "poethepoet"
+]
+
+[tool.uv]
+package = true
+
+[tool.poe.env]
+PYTHONPATH = "src"
+
+[tool.poe.tasks]
+dev = "uvicorn app.api:app --host 0.0.0.0 --port 8000 --reload"
+api = "uvicorn app.api:app --host 0.0.0.0 --port 8000"
+test = "pytest src/tests/unit"
+test_integration = "pytest src/tests/integration"

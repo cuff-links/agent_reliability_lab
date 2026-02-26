@@ -1,0 +1,13 @@
+{
+  "dag_id": "customer_activity_dag",
+  "owner": "data-platform",
+  "sla_minutes": 30,
+  "description": "Syncs customer activity events into the analytics warehouse every 15 minutes.",
+  "critical_tasks": [
+    "extract_customers",
+    "transform_orders",
+    "load_warehouse"
+  ],
+  "downstream_system": "warehouse-cluster-3",
+  "last_success": "2025-02-24T23:45:00Z"
+}
