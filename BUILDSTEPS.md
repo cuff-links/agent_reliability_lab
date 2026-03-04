@@ -60,12 +60,14 @@ This is the recommended implementation sequence (optimized for fast progress + m
 
 **Goal:** Turn behavior into a regression-tested system.
 
-- [ ] Define eval case format (JSON/YAML), e.g.:
-  - [ ] `id`
-  - [ ] `input_payload`
-  - [ ] `expected_schema`
-  - [ ] `rubric` (rules for “good”)
-- [ ] Add 10–20 eval cases under `tests/eval_cases/`
+- [x] Define eval case format (JSON/YAML), e.g.:
+  - [x] `id`
+  - [x] `input_payload`
+  - [x] `expected_schema`
+  - [x] `rubric` (rules for “good”)
+    - `expected_status`, `min_confidence`, `require_actions`, `require_runbook_evidence`, `forbidden_phrases`, `max_latency_ms`
+  - Pydantic models: `src/evals/models.py` (`EvalCase`, `EvalRubric`)
+- [ ] Add 10–20 eval cases under `tests/eval_cases/` (5 starter cases added: eval_001–eval_005)
 - [ ] Build `pytest` runner:
   - [ ] runs agent against each eval case
   - [ ] runs each case N times (e.g., 3) for consistency checks
@@ -156,7 +158,7 @@ This is the recommended implementation sequence (optimized for fast progress + m
 
 ---
 
-# Recommended MVP Stop Point
+## Recommended MVP Stop Point
 
 If you reach **Phase 4**, you already have a strong portfolio project for AI Quality Engineering.
 

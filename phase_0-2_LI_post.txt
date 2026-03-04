@@ -1,0 +1,17 @@
+Most AI agent tutorials end with "look, it returned something."
+
+That's not good enough for production.
+
+I've been building a project called the Agent Reliability Lab — not just an AI agent, but the framework that makes the agent trustworthy. Structured input/output contracts that reject bad data before the agent ever runs. Hard guardrails on tool calls, timeouts, and retries. Graceful degradation so the system never crashes, it just tells you what it needs. Per-request metrics baked directly into every response.
+
+The agent triages data pipeline incidents: it reads logs, pulls DAG metadata, searches runbooks, and returns a structured diagnosis with a root cause, confidence score, and recommended next steps.
+
+But the more interesting part is what's wrapped around it.
+
+The insight I keep coming back to: building the agent is the easy part. What most teams skip is the scaffolding that lets you answer the harder questions — is it behaving correctly? Will it behave the same way next week? When it fails, why?
+
+I wrote up the full technical breakdown of Phases 0–2 on my site if you want to go deep on the architecture.
+
+[link]
+
+Phase 3 (the eval harness) is next. That's where it gets really interesting.

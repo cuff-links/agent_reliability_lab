@@ -1,0 +1,22 @@
+{
+  "id": "eval-001",
+  "description": "High-severity timeout incident should be triaged with runbook evidence and high confidence.",
+  "input_payload": {
+    "incident_id": "INC-1001",
+    "run_id": "ingest_run_20250225",
+    "dag_id": "customer_activity_dag",
+    "severity": "high",
+    "summary": "Load warehouse task continues to timeout",
+    "reporter": "pagerduty",
+    "keywords": ["timeout"]
+  },
+  "expected_schema": {},
+  "rubric": {
+    "expected_status": "triaged",
+    "min_confidence": 0.7,
+    "require_actions": true,
+    "require_runbook_evidence": true,
+    "forbidden_phrases": [],
+    "max_latency_ms": 5000
+  }
+}

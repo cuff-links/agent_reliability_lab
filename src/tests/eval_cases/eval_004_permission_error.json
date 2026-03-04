@@ -1,0 +1,22 @@
+{
+  "id": "eval-004",
+  "description": "Permission-related keyword should steer root cause toward credential diagnosis.",
+  "input_payload": {
+    "incident_id": "INC-1004",
+    "run_id": "ingest_run_20250225",
+    "dag_id": "customer_activity_dag",
+    "severity": "medium",
+    "summary": "DAG task failed with access denied error",
+    "reporter": "pagerduty",
+    "keywords": ["permission"]
+  },
+  "expected_schema": {},
+  "rubric": {
+    "expected_status": "triaged",
+    "min_confidence": 0.5,
+    "require_actions": true,
+    "require_runbook_evidence": false,
+    "forbidden_phrases": ["timed out"],
+    "max_latency_ms": 5000
+  }
+}

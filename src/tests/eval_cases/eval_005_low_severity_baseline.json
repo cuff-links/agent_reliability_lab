@@ -1,0 +1,22 @@
+{
+  "id": "eval-005",
+  "description": "Low-severity incident should still return a valid triaged response with at least one action.",
+  "input_payload": {
+    "incident_id": "INC-1005",
+    "run_id": "ingest_run_20250225",
+    "dag_id": "customer_activity_dag",
+    "severity": "low",
+    "summary": "Minor delay observed in batch ingestion job",
+    "reporter": "cron-watcher",
+    "keywords": ["delay"]
+  },
+  "expected_schema": {},
+  "rubric": {
+    "expected_status": "triaged",
+    "min_confidence": 0.3,
+    "require_actions": true,
+    "require_runbook_evidence": false,
+    "forbidden_phrases": [],
+    "max_latency_ms": 5000
+  }
+}
