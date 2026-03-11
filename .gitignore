@@ -215,3 +215,6 @@ __marimo__/
 
 # Articles for LinkedIn
 docs_to_upload
+
+# Don't upload the evaluation report to GH
+eval_report.json
