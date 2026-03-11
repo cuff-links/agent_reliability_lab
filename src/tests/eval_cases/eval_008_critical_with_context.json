@@ -1,0 +1,23 @@
+{
+  "id": "eval-008",
+  "description": "Critical incident with additional context — verifies context field is accepted and response is still valid.",
+  "input_payload": {
+    "incident_id": "INC-1008",
+    "run_id": "ingest_run_20250225",
+    "dag_id": "customer_activity_dag",
+    "severity": "critical",
+    "summary": "Load warehouse task timed out causing full pipeline failure",
+    "reporter": "pagerduty",
+    "keywords": ["timeout"],
+    "context": "Downstream dashboard shows 0 rows loaded since 01:00 UTC. Cluster autoscaler logs show capacity exhaustion."
+  },
+  "expected_schema": {},
+  "rubric": {
+    "expected_status": "triaged",
+    "min_confidence": 0.7,
+    "require_actions": true,
+    "require_runbook_evidence": true,
+    "forbidden_phrases": [],
+    "max_latency_ms": 5000
+  }
+}

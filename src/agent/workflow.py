@@ -1,10 +1,11 @@
 """Deterministic agent workflow for triaging incidents."""
 from __future__ import annotations
 
+from dataclasses import dataclass
 from math import ceil
 from textwrap import shorten
 from time import perf_counter
-from typing import Tuple
+from typing import Any, Tuple
 
 from agent.guardrails import (
     GuardrailBreach,
@@ -24,9 +25,17 @@ from app.models import (
 from tools.deterministic import get_dag_metadata, get_logs, search_runbooks
 
 
+@dataclass
+class WorkflowResult:
+    """Return value of run_incident_playbook — bundles the response with raw trace data."""
+
+    response: AgentResponse
+    tool_details: list[dict[str, Any]]
+
+
 def run_incident_playbook(
     request: IncidentRequest, config: GuardrailConfig | None = None
-) -> AgentResponse:
+) -> WorkflowResult:
     """Execute the deterministic workflow with guardrail enforcement."""
 
     guardrails = config or GuardrailConfig()
@@ -46,7 +55,7 @@ def run_incident_playbook(
         if keyword:
             _record_reasoning(metrics, guardrails)
 
-        root_cause, confidence = _infer_root_cause(log_result.text)
+        root_cause, confidence = _infer_root_cause(log_result.text, keyword)
         actions = _build_actions(request, dag_metadata.owner, keyword)
         evidence = _build_evidence(log_result.text, dag_metadata.description, runbook_hits)
         summary = _compose_summary(request, dag_metadata.description, root_cause)
@@ -57,7 +66,7 @@ def run_incident_playbook(
             metrics,
         )
 
-        return _build_response(
+        response = _build_response(
             request=request,
             status="triaged",
             summary=summary,
@@ -69,10 +78,13 @@ def run_incident_playbook(
             metrics=metrics,
             clock_start=clock_start,
         )
+        return WorkflowResult(response=response, tool_details=list(metrics.tool_details))
     except (GuardrailBreach, ToolFailure) as exc:
-        return _fallback_response(request, f"guardrail triggered: {exc}", metrics, clock_start)
+        response = _fallback_response(request, f"guardrail triggered: {exc}", metrics, clock_start)
+        return WorkflowResult(response=response, tool_details=list(metrics.tool_details))
     except Exception as exc:  # noqa: BLE001 - we need to degrade gracefully
-        return _fallback_response(request, f"unexpected failure: {exc}", metrics, clock_start)
+        response = _fallback_response(request, f"unexpected failure: {exc}", metrics, clock_start)
+        return WorkflowResult(response=response, tool_details=list(metrics.tool_details))
 
 
 def _select_keyword(request: IncidentRequest) -> str | None:
@@ -82,9 +94,17 @@ def _select_keyword(request: IncidentRequest) -> str | None:
     return tokens[0].lower() if tokens else None
 
 
-def _infer_root_cause(log_text: str) -> Tuple[str, float]:
+def _infer_root_cause(log_text: str, keyword: str | None = None) -> Tuple[str, float]:
+    kw = (keyword or "").lower()
     lowered = log_text.lower()
-    if "timeout" in lowered:
+
+    # Keyword from the reporter is a strong primary signal — check it first.
+    if "permission" in kw:
+        return (
+            "Credential or permission issue detected; validate service account and IAM roles.",
+            0.67,
+        )
+    if "timeout" in kw or "timeout" in lowered:
         return (
             "Warehouse writer timed out waiting for cluster capacity; retries exhausted.",
             0.82,

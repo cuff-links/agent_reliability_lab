@@ -26,7 +26,7 @@ def test_timeout_triggers_needs_info_fallback(monkeypatch: pytest.MonkeyPatch, b
     config = GuardrailConfig(tool_timeout_seconds=0.01, max_tool_retries=0)
     monkeypatch.setattr("agent.workflow.get_logs", _slow_log)
 
-    response = run_incident_playbook(base_request, config=config)
+    response = run_incident_playbook(base_request, config=config).response
 
     assert response.status == "needs_info"
     assert "timeout" in response.summary.lower()
@@ -41,7 +41,7 @@ def test_tool_failure_after_retries(monkeypatch: pytest.MonkeyPatch, base_reques
 
     monkeypatch.setattr("agent.workflow.get_logs", _boom)
 
-    response = run_incident_playbook(base_request, config=config)
+    response = run_incident_playbook(base_request, config=config).response
 
     assert response.status == "needs_info"
     assert "guardrail" in response.summary.lower()

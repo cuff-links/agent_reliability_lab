@@ -21,7 +21,8 @@ def incident_request() -> IncidentRequest:
 
 
 def test_run_incident_playbook_returns_actions_and_metrics(incident_request: IncidentRequest) -> None:
-    response = run_incident_playbook(incident_request)
+    result = run_incident_playbook(incident_request)
+    response = result.response
 
     assert response.incident_id == incident_request.incident_id
     assert response.confidence > 0
@@ -30,3 +31,4 @@ def test_run_incident_playbook_returns_actions_and_metrics(incident_request: Inc
     assert response.status == "triaged"
     assert response.metrics.latency_ms >= 0
     assert response.metrics.tool_count >= 1
+    assert result.tool_details  # Phase 4: trace data is available

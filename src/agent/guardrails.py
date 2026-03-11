@@ -35,7 +35,16 @@ class WorkflowMetrics:
     estimated_cost_usd: float = 0.0
     tool_details: list[dict[str, Any]] = field(default_factory=list)
 
-    def record_tool(self, *, name: str, duration_ms: float, status: str, retries: int) -> None:
+    def record_tool(
+        self,
+        *,
+        name: str,
+        duration_ms: float,
+        status: str,
+        retries: int,
+        input_summary: str = "",
+        output_summary: str = "",
+    ) -> None:
         self.tool_calls += 1
         self.tool_details.append(
             {
@@ -43,6 +52,8 @@ class WorkflowMetrics:
                 "duration_ms": round(duration_ms, 2),
                 "status": status,
                 "retries": retries,
+                "input_summary": input_summary,
+                "output_summary": output_summary,
             }
         )
 
@@ -62,6 +73,7 @@ class ToolRunner:
         if self._invocations >= self._config.max_tool_calls:
             raise GuardrailBreach("Maximum tool invocations exceeded")
         self._invocations += 1
+        input_summary = ", ".join(str(a)[:100] for a in args) if args else ""
         attempts = 0
         last_exc: Exception | None = None
         while attempts <= self._config.max_tool_retries:
@@ -75,14 +87,24 @@ class ToolRunner:
                         f"{name} exceeded timeout of {self._config.tool_timeout_seconds:.2f}s"
                     )
                 self._metrics.record_tool(
-                    name=name, duration_ms=duration_ms, status="ok", retries=attempts - 1
+                    name=name,
+                    duration_ms=duration_ms,
+                    status="ok",
+                    retries=attempts - 1,
+                    input_summary=input_summary,
+                    output_summary=repr(result)[:200],
                 )
                 return result
             except Exception as exc:  # noqa: BLE001 - guardrail requires catching all
                 duration_ms = (perf_counter() - start) * 1000
                 status = "timeout" if isinstance(exc, ToolTimeout) else "error"
                 self._metrics.record_tool(
-                    name=name, duration_ms=duration_ms, status=status, retries=attempts - 1
+                    name=name,
+                    duration_ms=duration_ms,
+                    status=status,
+                    retries=attempts - 1,
+                    input_summary=input_summary,
+                    output_summary=str(exc)[:200],
                 )
                 last_exc = exc
                 if attempts > self._config.max_tool_retries:

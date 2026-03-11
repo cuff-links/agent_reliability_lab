@@ -1,0 +1,22 @@
+{
+  "id": "eval-007",
+  "description": "Multiple keywords provided — first keyword drives runbook search.",
+  "input_payload": {
+    "incident_id": "INC-1007",
+    "run_id": "ingest_run_20250225",
+    "dag_id": "customer_activity_dag",
+    "severity": "high",
+    "summary": "Airflow task failed with timeout and data delay",
+    "reporter": "pagerduty",
+    "keywords": ["timeout", "delay", "retry"]
+  },
+  "expected_schema": {},
+  "rubric": {
+    "expected_status": "triaged",
+    "min_confidence": 0.7,
+    "require_actions": true,
+    "require_runbook_evidence": true,
+    "forbidden_phrases": [],
+    "max_latency_ms": 5000
+  }
+}

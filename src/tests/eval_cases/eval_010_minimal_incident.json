@@ -1,0 +1,22 @@
+{
+  "id": "eval-010",
+  "description": "Minimal incident — no keywords, short summary, low severity. Baseline validity check.",
+  "input_payload": {
+    "incident_id": "INC-1010",
+    "run_id": "ingest_run_20250225",
+    "dag_id": "customer_activity_dag",
+    "severity": "low",
+    "summary": "Job failed",
+    "reporter": "cron-watcher",
+    "keywords": []
+  },
+  "expected_schema": {},
+  "rubric": {
+    "expected_status": null,
+    "min_confidence": 0.0,
+    "require_actions": true,
+    "require_runbook_evidence": false,
+    "forbidden_phrases": [],
+    "max_latency_ms": 5000
+  }
+}

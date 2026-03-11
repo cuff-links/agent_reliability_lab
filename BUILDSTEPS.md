@@ -67,19 +67,25 @@ This is the recommended implementation sequence (optimized for fast progress + m
   - [x] `rubric` (rules for “good”)
     - `expected_status`, `min_confidence`, `require_actions`, `require_runbook_evidence`, `forbidden_phrases`, `max_latency_ms`
   - Pydantic models: `src/evals/models.py` (`EvalCase`, `EvalRubric`)
-- [ ] Add 10–20 eval cases under `tests/eval_cases/` (5 starter cases added: eval_001–eval_005)
-- [ ] Build `pytest` runner:
-  - [ ] runs agent against each eval case
-  - [ ] runs each case N times (e.g., 3) for consistency checks
-- [ ] Add scoring functions:
-  - [ ] schema validity (hard pass/fail)
-  - [ ] required fields present
-  - [ ] actionability (must include next steps)
-  - [ ] consistency (variance across repeated runs)
-  - [ ] latency + cost stats
-- [ ] Output a summary report (console + JSON artifact)
+- [x] Add 10–20 eval cases under `tests/eval_cases/` (10 cases: eval_001–eval_010)
+- [x] Build `pytest` runner:
+  - [x] runs agent against each eval case
+  - [x] runs each case N times (3) for consistency checks
+  - `src/tests/eval_harness/test_eval_cases.py` + `conftest.py`
+  - `src/evals/runner.py` (`run_eval_case`, `consistency_score`)
+- [x] Add scoring functions:
+  - [x] schema validity (hard pass/fail)
+  - [x] required fields present
+  - [x] actionability (must include next steps)
+  - [x] consistency (variance across repeated runs)
+  - [x] latency + cost stats
+  - `src/evals/scoring.py` (`RunScore`, `score_response`)
+- [x] Output a summary report (console + JSON artifact)
+  - Console: printed via `pytest_terminal_summary` hook
+  - JSON: written to `eval_report.json` at repo root
+- ~~Known gap found by harness~~ — **fixed**: keyword now takes priority over log text in root cause inference. Pass rate: **10/10 (100%)**.
 
-**Deliverable:** `pytest` produces an eval report + pass rate.
+**Deliverable:** `pytest` produces an eval report + pass rate. ✅
 
 ---
 
@@ -87,25 +93,26 @@ This is the recommended implementation sequence (optimized for fast progress + m
 
 **Goal:** Store runs, traces, and metrics like a real platform.
 
-- [ ] Add Docker Compose with Postgres
-- [ ] Create DB schema/tables:
-  - [ ] `eval_cases`
-  - [ ] `eval_runs`
-  - [ ] `step_traces`
-  - [ ] `tool_calls`
-  - [ ] `scores`
-  - [ ] `model_versions`
-- [ ] Persist each eval run + scores
-- [ ] Persist per-step traces:
-  - [ ] step name
-  - [ ] tool called
-  - [ ] inputs/outputs (redacted/safe)
-  - [ ] duration
-- [ ] Add endpoints:
-  - [ ] `GET /runs/{run_id}`
-  - [ ] `GET /runs/{run_id}/trace`
+- [x] Add Docker Compose with Postgres (`docker-compose.yml`, Postgres 16)
+- [x] Create DB schema/tables (`src/db/models.py`, `src/db/schema.sql`):
+  - [x] `eval_cases`
+  - [x] `eval_runs`
+  - [x] `step_traces`
+  - [x] `tool_calls`
+  - [x] `scores`
+  - [x] `model_versions`
+- [x] Persist each eval run + scores (`src/db/persist.py`, `src/evals/runner.py persist=True`)
+- [x] Persist per-step traces:
+  - [x] step name
+  - [x] tool called
+  - [x] inputs/outputs (captured in `ToolRunner`, stored in `step_traces`)
+  - [x] duration
+- [x] Add endpoints (`src/app/api.py`):
+  - [x] `GET /runs/{run_id}`
+  - [x] `GET /runs/{run_id}/trace`
+- DB enabled via `DATABASE_URL` env var; omitting it skips persistence cleanly (no Docker required for `poe test` or `poe eval`)
 
-**Deliverable:** You can click/inspect why a test failed.
+**Deliverable:** You can click/inspect why a test failed. ✅
 
 ---
 

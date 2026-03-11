@@ -1,8 +1,9 @@
 """Pydantic models and enums for the Agent Reliability Lab API."""
 from __future__ import annotations
 
+from datetime import datetime
 from enum import Enum
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -74,3 +75,57 @@ class AgentResponse(BaseModel):
     evidence: list[EvidenceItem] = Field(default_factory=list)
     metadata: dict[str, str] = Field(default_factory=dict)
     metrics: RequestMetrics
+
+
+# ---------------------------------------------------------------------------
+# Phase 4 — response models for GET /runs and GET /runs/{run_id}/trace
+# ---------------------------------------------------------------------------
+
+
+class ScoreDetail(BaseModel):
+    """Scoring breakdown for a single eval run."""
+
+    schema_valid: bool
+    status_match: bool
+    confidence_ok: bool
+    actions_present: bool
+    runbook_evidence_ok: bool
+    forbidden_phrases_ok: bool
+    latency_ok: bool
+    passed: bool
+    latency_ms: float
+    cost_usd: float
+    token_usage: int
+
+
+class RunDetail(BaseModel):
+    """Summary of a persisted eval run, including its score."""
+
+    run_id: str
+    case_id: str
+    run_index: int
+    model_version: str
+    passed: bool
+    started_at: datetime
+    completed_at: datetime
+    agent_response: dict[str, Any]
+    score: ScoreDetail
+
+
+class TraceStep(BaseModel):
+    """A single step in a run's execution trace."""
+
+    step_index: int
+    step_name: str
+    tool_called: str | None
+    input_summary: str
+    output_summary: str
+    duration_ms: float
+    status: str
+
+
+class RunTrace(BaseModel):
+    """Full execution trace for a persisted eval run."""
+
+    run_id: str
+    steps: list[TraceStep]

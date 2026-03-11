@@ -1,0 +1,22 @@
+{
+  "id": "eval-011",
+  "description": "INTENTIONAL FAILURE — demonstrates what a failing eval run looks like. Requires confidence >= 0.99 (agent max is 0.82) and forbids the phrase 'retries exhausted' which appears in the timeout root cause.",
+  "input_payload": {
+    "incident_id": "INC-1011",
+    "run_id": "ingest_run_20250225",
+    "dag_id": "customer_activity_dag",
+    "severity": "high",
+    "summary": "Load warehouse task timed out",
+    "reporter": "pagerduty",
+    "keywords": ["timeout"]
+  },
+  "expected_schema": {},
+  "rubric": {
+    "expected_status": "triaged",
+    "min_confidence": 0.99,
+    "require_actions": true,
+    "require_runbook_evidence": true,
+    "forbidden_phrases": ["retries exhausted"],
+    "max_latency_ms": 5000
+  }
+}

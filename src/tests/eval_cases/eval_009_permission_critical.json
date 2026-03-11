@@ -1,0 +1,22 @@
+{
+  "id": "eval-009",
+  "description": "Critical-severity permission failure — root cause must reference credentials, not timeouts.",
+  "input_payload": {
+    "incident_id": "INC-1009",
+    "run_id": "ingest_run_20250225",
+    "dag_id": "customer_activity_dag",
+    "severity": "critical",
+    "summary": "Service account access denied on warehouse write step",
+    "reporter": "pagerduty",
+    "keywords": ["permission"]
+  },
+  "expected_schema": {},
+  "rubric": {
+    "expected_status": "triaged",
+    "min_confidence": 0.5,
+    "require_actions": true,
+    "require_runbook_evidence": false,
+    "forbidden_phrases": ["timed out", "cluster capacity"],
+    "max_latency_ms": 5000
+  }
+}

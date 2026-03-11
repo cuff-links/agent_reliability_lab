@@ -1,0 +1,22 @@
+{
+  "id": "eval-006",
+  "description": "run_id with no matching log file — agent should still return a valid response, not crash.",
+  "input_payload": {
+    "incident_id": "INC-1006",
+    "run_id": "nonexistent_run_99999",
+    "dag_id": "customer_activity_dag",
+    "severity": "medium",
+    "summary": "Pipeline failed with no log output available",
+    "reporter": "monitoring-bot",
+    "keywords": []
+  },
+  "expected_schema": {},
+  "rubric": {
+    "expected_status": null,
+    "min_confidence": null,
+    "require_actions": true,
+    "require_runbook_evidence": false,
+    "forbidden_phrases": [],
+    "max_latency_ms": 5000
+  }
+}
